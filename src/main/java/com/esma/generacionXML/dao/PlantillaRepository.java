@@ -28,13 +28,11 @@ public interface PlantillaRepository extends JpaRepository<Plantilla_esma, Integ
 	}
 
 /*f1 */
-
-
-//	//se Guarda en un Map<> hasMap(), que es un una estrcutura Flexible
+	
 	@Query(value="select * from inicial_fc fc where fc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_IC(@Param("plantilla") String plantilla);
 	
-	//@Query(value="select * from #{#plantilla} cc where cc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
+	
 	@Query(value="select * from fc_c cc where cc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_CC(@Param("plantilla") String plantilla);
 

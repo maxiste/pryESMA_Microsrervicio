@@ -65,28 +65,25 @@ public class PlantillaController {
 	
 	//"PRUEBA" sin el modelo logico asociado
 	@RequestMapping(value="pl/", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> listaxPlantilla(@RequestParam(required = false) String plantilla) throws Exception, Throwable {
-		List<Map<String, Object>> fondoN=sPlantilla.listaxPlantilla(plantilla);
-		
+	public ResponseEntity<?> listaxPlantilla(@RequestParam(required=false) String fondo,@RequestParam(required=false) String plantilla_esma,@RequestParam(required=false) String mfechaI,@RequestParam(required=false) String mfechaF) throws Exception, Throwable {
+		Map<String, Object>  fondoN=sPlantilla.listaxPlantilla(fondo,plantilla_esma,mfechaI,mfechaF);
+		sPlantilla.exportacionesReportes(fondo);
 		//Metodo solciitud de fuente
-		sPlantilla.opcionFuentes(plantilla);
+		//sPlantilla.opcionFuentes(plantilla_esma);
 		//con las tuplas se devuelve las estructura (columnas) que conforma las tablas en cuestion
 		System.out.println("Uso de las Map sin Entidad desde el Controller--> "+fondoN.toString());
 		return new ResponseEntity(fondoN, HttpStatus.OK);
 	}
 	
-	//funcional con el FRONT
+	//funcional con el FRONT con Angular
 	@RequestMapping (value="plantillas/",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE) 
 	public List<Plantilla_esma> busquedaPlantilla(@RequestParam(required=false) String fondo,@RequestParam(required=false) String plantilla_esma,@RequestParam(required=false) String mfechaI,@RequestParam(required=false) String mfechaF){
 		SimpleDateFormat fechaFormato=new SimpleDateFormat("yyyy-MM-dd");
-		System.out.println("Este es el parametro del Front --> "+fondo);
-		
-		System.out.println("Este es el parametro tipo Plantillat --> "+plantilla_esma);
-		
-		System.out.println("Este es el parametro fechaInicial del front en el Controller --> "+mfechaI);
-		
-		System.out.println("Este es el parametro fechaFin del front en el Controller --> "+mfechaF);
-		
+//		System.out.println("Este es el parametro del Front --> "+fondo);
+//		System.out.println("Este es el parametro tipo Plantillat --> "+plantilla_esma);
+//		System.out.println("Este es el parametro fechaInicial del front en el Controller --> "+mfechaI);
+//		System.out.println("Este es el parametro fechaFin del front en el Controller --> "+mfechaF);
+//		
 		//SimpleDateFormat fechaFormato=new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			sPlantilla.exportacionesReportes(fondo);

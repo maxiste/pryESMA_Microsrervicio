@@ -4,6 +4,7 @@
 	<parameter name="miTitulo" class="java.lang.String" isForPrompting="false" evaluationTime="Early">
 		<parameterDescription><![CDATA[el Titulo Dvuelto]]></parameterDescription>
 	</parameter>
+	<parameter name="AUTL4" class="java.lang.String"/>
 	<field name="id_esma" class="java.lang.Integer"/>
 	<field name="cod_fondo" class="java.lang.String"/>
 	<field name="plantilla_esma" class="java.lang.String"/>

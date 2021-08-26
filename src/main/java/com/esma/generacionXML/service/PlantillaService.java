@@ -29,11 +29,12 @@ public interface PlantillaService {
 	List<Plantilla_esma> buscarPorfondos(String fondo, String cod_plantilla,String fechai, String fechaf);
 
 	//metodos iteratores de las colecciones "@RequestMapping(value="pl/""
-	List<Map<String, Object>> listaxPlantilla(String plantilla) throws Exception, Throwable /*throws SAXException, JAXBException*/;
+	Map<String, Object>  listaxPlantilla(String fondo, String cod_plantilla,String fechai, String fechaf) throws Exception, Throwable /*throws SAXException, JAXBException*/;
+	//List<Map<String, Object>> listaxPlantilla(String plantilla) throws Exception, Throwable /*throws SAXException, JAXBException*/;
 	
 	
 //Metodos de Seleccion de >Fuentes
-	 List<Map<String, Object>> opcionFuentes(String fuente);	 
+	 Map<String, Object> opcionFuentes(String fuente);	 
 	 
 	// List<Map<String, Object>> listaxPlantilla_inicial(String plantilla) throws Exception, Throwable /*throws SAXException, JAXBException*/;
 		
