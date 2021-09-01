@@ -29,9 +29,8 @@ public interface PlantillaRepository extends JpaRepository<Plantilla_esma, Integ
 
 /*f1 */
 	
-	@Query(value="select * from inicial_fc fc where fc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
+	@Query(value="select * from inicial_fc fc where fc.plantilla_esma=:plantilla order by plantilla_esma", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_IC(@Param("plantilla") String plantilla);
-	
 	
 	@Query(value="select * from fc_c cc where cc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_CC(@Param("plantilla") String plantilla);
@@ -49,7 +48,7 @@ public interface PlantillaRepository extends JpaRepository<Plantilla_esma, Integ
 	List<Map<String, Object>> listaDatosxPlantilla_DW(@Param("plantilla") String plantilla);
 
 	
-	@Query(value="SELECT distinct fuente_int_ext, fuente_ie_detalle,campo_fuente,column_esma from maestra_codigo_esma u where u.plantilla_esma=:plantilla order by column_esma", nativeQuery = true) //pasar los parametros
+	@Query(value="SELECT  fuente_int_ext, fuente_ie_detalle, campo_fuente, column_esma from maestra_codigo_esma u where u.plantilla_esma=:plantilla order by column_esma", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> opcionFuente(String plantilla);
 	
 }

@@ -24,19 +24,12 @@ import net.sf.jasperreports.engine.JRException;
 @Service
 public interface PlantillaService {
 	
-	public String exportacionesReportes(String reportFormato /*, Plantilla_esma plantilla*/) throws FileNotFoundException, JRException;
-
-	List<Plantilla_esma> buscarPorfondos(String fondo, String cod_plantilla,String fechai, String fechaf);
+	public String exportacionesReportes(String reportFormato /*, Plantilla_esma plantilla*/, String plantilla_esma) throws FileNotFoundException, JRException;
 
 	//metodos iteratores de las colecciones "@RequestMapping(value="pl/""
 	Map<String, Object>  listaxPlantilla(String fondo, String cod_plantilla,String fechai, String fechaf) throws Exception, Throwable /*throws SAXException, JAXBException*/;
-	//List<Map<String, Object>> listaxPlantilla(String plantilla) throws Exception, Throwable /*throws SAXException, JAXBException*/;
 	
-	
-//Metodos de Seleccion de >Fuentes
+	//Metodos de Seleccion de >Fuentes
 	 Map<String, Object> opcionFuentes(String fuente);	 
 	 
-	// List<Map<String, Object>> listaxPlantilla_inicial(String plantilla) throws Exception, Throwable /*throws SAXException, JAXBException*/;
-		
-
 }
