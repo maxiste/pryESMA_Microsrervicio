@@ -29,7 +29,12 @@ public interface PlantillaRepository extends JpaRepository<Plantilla_esma, Integ
 
 /*f1 */
 	
-	@Query(value="select * from inicial_fc fc where fc.plantilla_esma=:plantilla order by plantilla_esma", nativeQuery = true) //pasar los parametros
+	//@Query(value="select * from inicial_fc fc where fc.plantilla_esma=:plantilla order by plantilla_esma", nativeQuery = true) //pasar los parametros
+	@Query(value="SELECT fc.id_inicial,fc.id_prestamo,fc.fecha_final_vigente, \r\n"
+			+ "fc.vida_inicial,fc.plantilla_esma, \r\n"
+			+ "re.provincia\r\n"
+			+ "from generacion.inicial_fc fc \r\n"
+			+ "inner join generacion.registral re on fc.id_prestamo=re.id_prestamo where fc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_IC(@Param("plantilla") String plantilla);
 	
 	@Query(value="select * from fc_c cc where cc.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros

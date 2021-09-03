@@ -145,7 +145,8 @@ public class PlantillaServiceImpl implements PlantillaService {
 
 		});
 		System.out.println("\n" + "Lista Collection (nombreValorFinal) con KeyDuplicados" + nombreValorFinal);
-
+		List<Object> registros=separarPorRegistros(nombreValorFinal);
+		
 		String fichero = "";
 
 		try (BufferedReader br = new BufferedReader(new FileReader(
@@ -241,33 +242,7 @@ public class PlantillaServiceImpl implements PlantillaService {
 
 	}
 
-	// Ordenamiento de HAshMap */
-	AtomicInteger registro1 = new AtomicInteger(0);
-
-	List<Map<String, Object>> ordenarConsolidado(List<Map<String, Object>> consolidado) {
-		Map<String, Object> consolidadotemp = new HashMap<String, Object>();
-
-		consolidado.forEach(kb -> {// consulta
-			Integer tempo = registro1.getAndIncrement();
-			String id_Reg = "";
-			for (Map.Entry<String, Object> entrada : kb.entrySet()) {
-
-				if (entrada.getKey().equals("id_prestamo") == true) {
-
-					id_Reg = (String) entrada.getValue().toString();
-				}
-				consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
-
-				if (entrada.getKey().equals("id_prestamo") == false) { // trae el valor del campo parado diferente a
-																		// id_inicial
-					id_Reg = (String) entrada.getValue().toString();
-				}
-				consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
-			}
-
-		});
-		return (List<Map<String, Object>>) consolidadotemp;
-	}
+	
 
 ///* UTILITARIOS   */
 	// Converter FECHA */
@@ -370,5 +345,33 @@ public class PlantillaServiceImpl implements PlantillaService {
 
 		return registroFinalTempo;
 	}
+	
+	// Ordenamiento de HAshMap no Utilizado por el Momento*/
+		AtomicInteger registro1 = new AtomicInteger(0);
+
+		List<Map<String, Object>> ordenarConsolidado(List<Map<String, Object>> consolidado) {
+			Map<String, Object> consolidadotemp = new HashMap<String, Object>();
+
+			consolidado.forEach(kb -> {// consulta
+				Integer tempo = registro1.getAndIncrement();
+				String id_Reg = "";
+				for (Map.Entry<String, Object> entrada : kb.entrySet()) {
+
+					if (entrada.getKey().equals("id_prestamo") == true) {
+
+						id_Reg = (String) entrada.getValue().toString();
+					}
+					consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
+
+					if (entrada.getKey().equals("id_prestamo") == false) { // trae el valor del campo parado diferente a
+																			// id_inicial
+						id_Reg = (String) entrada.getValue().toString();
+					}
+					consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
+				}
+
+			});
+			return (List<Map<String, Object>>) consolidadotemp;
+		}
 
 }
