@@ -30,6 +30,6 @@ public interface PlantillaService {
 	Map<String, Object>  listaxPlantilla(String fondo, String cod_plantilla,String fechai, String fechaf) throws Exception, Throwable /*throws SAXException, JAXBException*/;
 	
 	//Metodos de Seleccion de >Fuentes
-	 Map<String, Object> opcionFuentes(String fuente);	 
+	 Map<String, Object> opcionesFuentes(String fuente);	 
 	 
 }

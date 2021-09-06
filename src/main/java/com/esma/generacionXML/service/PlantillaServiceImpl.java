@@ -103,38 +103,47 @@ public class PlantillaServiceImpl implements PlantillaService {
 	@Override
 	public String exportacionesReportes(String fondo, String plantilla) throws FileNotFoundException, JRException {
 
-		Map<String, Object> miplantilla = opcionFuentes(plantilla);
+		Map<String, Object> miplantilla = opcionesFuentes(plantilla);
+		ArrayList<Object> nombreValorFinal = new ArrayList<Object>();
+		String t = "";
 		if (fondo.equalsIgnoreCase("AUT")) {
+			t = "coches.json";
+		
 			pTitulo = "Fondo de Coches Plantillas tipo Esma 5";
 			reporteCreado = ResourceUtils.getFile(plantBase5);
-			System.out.println("Lugar del plantilla --> " + reporteCreado);
+			System.out.println("Path donde esta la plantilla Generada--> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("CRM")) {
+			t = "consumo.json";
 			pTitulo = "Fondo de Consumo Plantillas tipo Esma 6";
 			reporteCreado = ResourceUtils.getFile(plantBase6);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("IVSS")) {
+			t = "pasivos.json";
 			pTitulo = "Pasivos Plantillas tipo Esma 12";
 			reporteCreado = ResourceUtils.getFile(plantBase12);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("SESS")) {
+			t = "hrelevantes.json";
 			pTitulo = "Hechos Relevantes Plantillas tipo Esma 14";
 			reporteCreado = ResourceUtils.getFile(plantBase14);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("ACR")) {
+			t = "activosh.json";
 			pTitulo = "Fondo de Activos Hipotecarios Plantillas tipo Esma 2";
 			reporteCreado = ResourceUtils.getFile(plantBase2);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
-		ArrayList<Object> nombreValorFinal = new ArrayList<Object>();
+		//m1 --llevar a metdo e incluir a if (fondo.equalsIgnoreCase("AUT")) {...
+		//ArrayList<Object> nombreValorFinal = new ArrayList<Object>();
 		miplantilla.forEach((i, v) -> {
 			String[] split = i.split("-");
 
@@ -145,31 +154,14 @@ public class PlantillaServiceImpl implements PlantillaService {
 
 		});
 		System.out.println("\n" + "Lista Collection (nombreValorFinal) con KeyDuplicados" + nombreValorFinal);
+		
+		//m2 --llevar a metdo e incluir a if (fondo.equalsIgnoreCase("AUT")) {...
 		List<Object> registros=separarPorRegistros(nombreValorFinal);
 		
-		String fichero = "";
 
-		try (BufferedReader br = new BufferedReader(new FileReader(
-				rutaJson + "coches.json"))) {
-			String linea;
-			while ((linea = br.readLine()) != null) {
-				fichero += linea;
-			}
-
-		} catch (FileNotFoundException ex) {
-			System.out.println(ex.getMessage());
-		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
-		}
-
-		ByteArrayInputStream jsonDataStream = new ByteArrayInputStream(fichero.getBytes());
-		datJason = ResourceUtils.getFile(dataJson);
+		
 		JasperReport jasperC = JasperCompileManager.compileReport(reporteCreado.getAbsolutePath());
-		String t = "";
-		if (plantilla.equals("pl5")) {
-			t = "coches.json";
-		}
-
+		
 		JsonDataSource jsonDataSource = new JsonDataSource(new File(rutaJson.concat(t)));
 		Map<String, Object> parametros = new HashMap<>();
 		parametros.put("miTitulo", pTitulo);
@@ -180,38 +172,43 @@ public class PlantillaServiceImpl implements PlantillaService {
 
 	}
 
+	
 	/**
 	 * "@RequestMapping(value="pl/"" Metodo que Utiliza los nuevo proceso de Merge
 	 * de los Datos Dinamicos de las Tbalas
+	 * METDO GENRAL PRA LA REPSUESTA DEVUELTE EN EL FRONT
 	 *
 	 */
 	@Override
 	public Map<String, Object> listaxPlantilla(String fondo, String cod_plantilla, String fechai, String fechaf)
 			throws Exception, Throwable {
-		Map<String, Object> dataS = opcionFuentes(cod_plantilla);
+		Map<String, Object> dataS = opcionesFuentes(cod_plantilla);
 		System.out.println("Filtrado del Map" + dataS.toString());
 		return dataS;
 	}
 
+	
+	
+	
 	/*
 	 * // Manejo de Colecciones Iteraciones entre dos Colecciones
 	 */
 
 	@Override
-	public Map<String, Object> opcionFuentes(String plantilla) {
+	public Map<String, Object> opcionesFuentes(String plantilla) {
 
-		List<Map<String, Object>> consolidado = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> cplanti = pRepository.opcionFuente(plantilla);
+		List<Map<String, Object>> consolidado = new ArrayList<Map<String, Object>>(); //CONJUNTO TBL X FONDO 
+		List<Map<String, Object>> cplanti = pRepository.opcionFuente(plantilla); //incluir fechas como parametros
 		Map<String, Object> nombreBDvalorBD = new HashMap<String, Object>(); // //tbl_inicial_fc
 		Map<String, Object> nombreBDcodigoESMA = new HashMap<String, Object>(); // plantilla_Esma /campo de la BD
 		Map<String, Object> codigoESMAValorBD = new HashMap<String, Object>(); // merge de columESMA -valorTabl
 
-		cplanti.remove("CLASIFICACIONES");
-		cplanti.remove("REGISTRAL");
-
-		consolidado.addAll(pRepository.listaDatosxPlantilla_IC(plantilla));
+		//m1 llevar a metodo y
+		consolidado=cxFondo(plantilla);
+		
+		//consolidado.addAll(pRepository.listaDatosxPlantilla_FC(plantilla)); //incluir como filtro las fechas
+		
 	AtomicInteger registro = new AtomicInteger(0);
-
 		consolidado.forEach(kb -> {// consulta
 			Integer tempo = registro.getAndIncrement();
 			String id_Reg = "";
@@ -243,7 +240,6 @@ public class PlantillaServiceImpl implements PlantillaService {
 	}
 
 	
-
 ///* UTILITARIOS   */
 	// Converter FECHA */
 	private static Date parseFecha(String fecha) {
@@ -258,7 +254,7 @@ public class PlantillaServiceImpl implements PlantillaService {
 		return fechaNormal;
 	}
 
-	// Separador x Registros en la Coleccion
+	// Separador Y CONVERSION x Registros en la Coleccion
 	Integer extraido = 0;
 	int idMax = 0;
 
@@ -274,7 +270,7 @@ public class PlantillaServiceImpl implements PlantillaService {
 				// System.out.println("Extraccion ID-> " + extra.group(1));
 				String str = extra.group(1).toString();
 
-				extraido = Integer.valueOf(str);
+				extraido =  Integer.valueOf(str); //Porblema con el tipo de datos en Data Real
 
 				if (idMax < extraido) {
 					idMax = extraido;
@@ -311,7 +307,8 @@ public class PlantillaServiceImpl implements PlantillaService {
 			}
 
 		});
-		/* Creacion de Json Manualmente */
+		
+		/* Creacion de Objeto Json Manualmente de los Registros */
 		Iterator<Object> it = registroFinal.iterator();
 		while (it.hasNext()) {
 
@@ -324,9 +321,9 @@ public class PlantillaServiceImpl implements PlantillaService {
 			}
 		}
 
-		String cadenaregistros = null;
-
-		cadenaregistros = ("{" + "\n" + "\"coches\"" + ":" + "\n" + registroFinalTempo.toString() + "\n" + "}");
+//		String cadenaregistros = null;
+//		cadenaregistros = ("{" + "\n" + "\"coches\"" + ":" + "\n" + registroFinalTempo.toString() + "\n" + "}");
+//		
 		try {
 			FileOutputStream jsonD = new FileOutputStream(
 					rutaJson
@@ -341,37 +338,85 @@ public class PlantillaServiceImpl implements PlantillaService {
 		System.out.println(idMax);
 		System.out.println("registro Temp---> " + registroFinalTempo.toString());
 		System.out.println("\n" + "---------------");
-		System.out.println("CadenaRegistrojson--> " + cadenaregistros);
+	//	System.out.println("CadenaRegistrojson--> " + cadenaregistros);
 
 		return registroFinalTempo;
+		
+		
+		
 	}
 	
-	// Ordenamiento de HAshMap no Utilizado por el Momento*/
-		AtomicInteger registro1 = new AtomicInteger(0);
-
-		List<Map<String, Object>> ordenarConsolidado(List<Map<String, Object>> consolidado) {
-			Map<String, Object> consolidadotemp = new HashMap<String, Object>();
-
-			consolidado.forEach(kb -> {// consulta
-				Integer tempo = registro1.getAndIncrement();
-				String id_Reg = "";
-				for (Map.Entry<String, Object> entrada : kb.entrySet()) {
-
-					if (entrada.getKey().equals("id_prestamo") == true) {
-
-						id_Reg = (String) entrada.getValue().toString();
-					}
-					consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
-
-					if (entrada.getKey().equals("id_prestamo") == false) { // trae el valor del campo parado diferente a
-																			// id_inicial
-						id_Reg = (String) entrada.getValue().toString();
-					}
-					consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
+	//Metodo Consolidado x Fondo
+			List<Map<String, Object>> cxFondo(String plantilla){
+				List<Map<String, Object>> miConsolidado = new ArrayList<Map<String, Object>>();
+				if (plantilla.equalsIgnoreCase("pl5")) {
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FA(plantilla));	
 				}
-
-			});
-			return (List<Map<String, Object>>) consolidadotemp;
-		}
+				if (plantilla.equalsIgnoreCase("pl6")) {
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FC(plantilla));	
+				}
+				if (plantilla.equalsIgnoreCase("pl2")) {
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_AC(plantilla));	
+				}
+				if (plantilla.equalsIgnoreCase("pl12")) {
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FP(plantilla));	
+				}
+				if (plantilla.equalsIgnoreCase("pl14")) {
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FH(plantilla));	
+				}
+				return miConsolidado;
+			}
+			
+	//m3 --lectura de ficheros
+//			String fichero = "";
+//			try (BufferedReader br = new BufferedReader(new FileReader(
+//					rutaJson + "coches.json"))) {
+//				String linea;
+//				while ((linea = br.readLine()) != null) {
+//					fichero += linea;
+//				}
+	//
+//			} catch (FileNotFoundException ex) {
+//				System.out.println(ex.getMessage());
+//			} catch (IOException ex) {
+//				System.out.println(ex.getMessage());
+//			}
+	//
+//			ByteArrayInputStream jsonDataStream = new ByteArrayInputStream(fichero.getBytes());
+//			datJason = ResourceUtils.getFile(dataJson);
+			
+			
+			//m4 --llevar a metdo e incluir a if (fondo.equalsIgnoreCase("AUT")) {...
+		
+//			if (plantilla.equals("pl5")) {
+//				t = "coches.json";
+//			}			
+	// Ordenamiento de HAshMap no Utilizado por el Momento*/
+//		AtomicInteger registro1 = new AtomicInteger(0);
+//
+//		List<Map<String, Object>> ordenarConsolidado(List<Map<String, Object>> consolidado) {
+//			Map<String, Object> consolidadotemp = new HashMap<String, Object>();
+//
+//			consolidado.forEach(kb -> {// consulta
+//				Integer tempo = registro1.getAndIncrement();
+//				String id_Reg = "";
+//				for (Map.Entry<String, Object> entrada : kb.entrySet()) {
+//
+//					if (entrada.getKey().equals("id_prestamo") == true) {
+//
+//						id_Reg = (String) entrada.getValue().toString();
+//					}
+//					consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
+//
+//					if (entrada.getKey().equals("id_prestamo") == false) { // trae el valor del campo parado diferente a
+//																			// id_inicial
+//						id_Reg = (String) entrada.getValue().toString();
+//					}
+//					consolidadotemp.put(tempo.toString() + "-" + entrada.getKey(), id_Reg + "!" + entrada.getValue());
+//				}
+//
+//			});
+//			return (List<Map<String, Object>>) consolidadotemp;
+//		}
 
 }
