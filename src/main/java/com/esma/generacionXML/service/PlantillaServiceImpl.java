@@ -87,9 +87,9 @@ public class PlantillaServiceImpl implements PlantillaService {
 	File datJason = null;
 	String pTitulo = null;
 
-	@Value("${dataJson}")
-	String dataJson;
-
+	//@Value("${dataJson}")
+	String dataJson=null;
+	
 	@Value("${rutaJson}")
 	String rutaJson;
 
@@ -101,49 +101,47 @@ public class PlantillaServiceImpl implements PlantillaService {
 	 */
 
 	@Override
-	public String exportacionesReportes(String fondo, String plantilla) throws FileNotFoundException, JRException {
-
+	public String exportacionesReportes(String fondo, String plantilla, String fechai, String fechaf) throws FileNotFoundException, JRException {
+		
 		Map<String, Object> miplantilla = opcionesFuentes(plantilla);
 		ArrayList<Object> nombreValorFinal = new ArrayList<Object>();
 		String t = "";
 		if (fondo.equalsIgnoreCase("AUT")) {
-			t = "coches.json";
-		
+			t = dataJson; // "coches.json";
 			pTitulo = "Fondo de Coches Plantillas tipo Esma 5";
 			reporteCreado = ResourceUtils.getFile(plantBase5);
 			System.out.println("Path donde esta la plantilla Generada--> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("CRM")) {
-			t = "consumo.json";
+			t = dataJson; 
 			pTitulo = "Fondo de Consumo Plantillas tipo Esma 6";
 			reporteCreado = ResourceUtils.getFile(plantBase6);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("IVSS")) {
-			t = "pasivos.json";
+			t = dataJson; 
 			pTitulo = "Pasivos Plantillas tipo Esma 12";
 			reporteCreado = ResourceUtils.getFile(plantBase12);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("SESS")) {
-			t = "hrelevantes.json";
+			t = dataJson; 
 			pTitulo = "Hechos Relevantes Plantillas tipo Esma 14";
 			reporteCreado = ResourceUtils.getFile(plantBase14);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		if (fondo.equalsIgnoreCase("ACR")) {
-			t = "activosh.json";
+			t = dataJson; 
 			pTitulo = "Fondo de Activos Hipotecarios Plantillas tipo Esma 2";
 			reporteCreado = ResourceUtils.getFile(plantBase2);
 			System.out.println("Lugar del plantilla --> " + reporteCreado);
 		}
 
 		//m1 --llevar a metdo e incluir a if (fondo.equalsIgnoreCase("AUT")) {...
-		//ArrayList<Object> nombreValorFinal = new ArrayList<Object>();
 		miplantilla.forEach((i, v) -> {
 			String[] split = i.split("-");
 
@@ -158,17 +156,25 @@ public class PlantillaServiceImpl implements PlantillaService {
 		//m2 --llevar a metdo e incluir a if (fondo.equalsIgnoreCase("AUT")) {...
 		List<Object> registros=separarPorRegistros(nombreValorFinal);
 		
-
-		
 		JasperReport jasperC = JasperCompileManager.compileReport(reporteCreado.getAbsolutePath());
-		
 		JsonDataSource jsonDataSource = new JsonDataSource(new File(rutaJson.concat(t)));
+		
 		Map<String, Object> parametros = new HashMap<>();
 		parametros.put("miTitulo", pTitulo);
+		
 		JasperPrint jasperPrintS = JasperFillManager.fillReport(jasperC, parametros, jsonDataSource);
 		JasperExportManager.exportReportToHtmlFile(jasperPrintS, pathSalida + "\\reportePlantilla.html");
 		JasperExportManager.exportReportToXmlFile(jasperPrintS, pathSalida + "\\reportePlantilla.xml", false); // sin
-		return "El Reprte se ha Generado en la Siguiente Ruta --> " + pathSalida;
+		
+		try {
+			auditorTxt(plantilla,fechai,fechaf);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "El Reporte se ha Generado en la Siguiente Ruta --> " + pathSalida;
+		
+		
 
 	}
 
@@ -239,7 +245,6 @@ public class PlantillaServiceImpl implements PlantillaService {
 
 	}
 
-	
 ///* UTILITARIOS   */
 	// Converter FECHA */
 	private static Date parseFecha(String fecha) {
@@ -270,7 +275,7 @@ public class PlantillaServiceImpl implements PlantillaService {
 				// System.out.println("Extraccion ID-> " + extra.group(1));
 				String str = extra.group(1).toString();
 
-				extraido =  Integer.valueOf(str); //Porblema con el tipo de datos en Data Real
+				extraido =  Integer.valueOf(str); //Porblema con el tipo de datos en Data Real en la Conversion
 
 				if (idMax < extraido) {
 					idMax = extraido;
@@ -324,12 +329,15 @@ public class PlantillaServiceImpl implements PlantillaService {
 //		String cadenaregistros = null;
 //		cadenaregistros = ("{" + "\n" + "\"coches\"" + ":" + "\n" + registroFinalTempo.toString() + "\n" + "}");
 //		
+		/*Generacion de Archivo json por fondo */
 		try {
+
 			FileOutputStream jsonD = new FileOutputStream(
 					rutaJson
-							+ "coches.json");
+							+  dataJson);//dataJson posee los difernetes nombres correspondientes
 			jsonD.write(registroFinalTempo.toString().getBytes());
 			jsonD.close();
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -341,32 +349,63 @@ public class PlantillaServiceImpl implements PlantillaService {
 	//	System.out.println("CadenaRegistrojson--> " + cadenaregistros);
 
 		return registroFinalTempo;
-		
-		
-		
+			
 	}
 	
 	//Metodo Consolidado x Fondo
 			List<Map<String, Object>> cxFondo(String plantilla){
 				List<Map<String, Object>> miConsolidado = new ArrayList<Map<String, Object>>();
 				if (plantilla.equalsIgnoreCase("pl5")) {
-					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FA(plantilla));	
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FA(plantilla));
+					dataJson="coches.json";
 				}
 				if (plantilla.equalsIgnoreCase("pl6")) {
 					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FC(plantilla));	
+					dataJson="consumo.json";
 				}
 				if (plantilla.equalsIgnoreCase("pl2")) {
-					miConsolidado.addAll(pRepository.listaDatosxPlantilla_AC(plantilla));	
+					miConsolidado.addAll(pRepository.listaDatosxPlantilla_AC(plantilla));
+					dataJson="activosH.json";
 				}
 				if (plantilla.equalsIgnoreCase("pl12")) {
 					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FP(plantilla));	
+					dataJson="pasivos.json";
 				}
 				if (plantilla.equalsIgnoreCase("pl14")) {
 					miConsolidado.addAll(pRepository.listaDatosxPlantilla_FH(plantilla));	
+					dataJson="hechosR.json";
 				}
 				return miConsolidado;
 			}
+	
+			String auditorTxt(String plantilla,String fechai, String 
+					fechaf) throws ParseException {
+				Date ndate = new Date() ;
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
 			
+				/*Generacion de Archivo Auditoria txt */
+				try {
+					String miAudi=dateFormat.format(ndate);
+					FileOutputStream audtT = new FileOutputStream(
+							rutaJson
+									+  miAudi+".txt");//dataJson posee los difernetes nombres correspondientes
+					audtT.write(("Se ha generado de manera Satisfactoria el Informe : "
+									+pTitulo+"\n"
+									+"en la ruta : "
+									+pathSalida+"\n"
+									+"Status :"+"OK"
+									+"Periodo Inicial : "+fechai+"\n"
+									+"Periodo Final : "+fechaf+"\n"
+									+"Fecha de Generacion : "
+									+ndate).getBytes());
+					audtT.close();
+					
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				return "ha ocurrido un Error en la generacion del Reporte xml, al Generar el Informe "+pTitulo;
+			}
 	//m3 --lectura de ficheros
 //			String fichero = "";
 //			try (BufferedReader br = new BufferedReader(new FileReader(

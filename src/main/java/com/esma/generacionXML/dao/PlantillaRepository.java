@@ -49,7 +49,7 @@ public interface PlantillaRepository extends JpaRepository<Plantilla_esma, Integ
 			+ "	   c.marca,c.modelo_comercial, c.entrada, c.valor_vehiculo_incl_imp, date_format(i.fecha_final_vigente,\"%d-%m-%Y\") fecha_final_vigente, i.vida_inicial,\r\n"
 			+ "       i.importe_inicial, i.importe_ph, i.frecuencia_pago_princ, i.frecuencia_pago_inte,\r\n"
 			+ "       i.cuota, i.mt_ballon_capital, i.tipo_ph, i.cod_banco, r.provincia, date_format(r.fecha_concesion,\"%d-%m-%Y\") fecha_concesion,  date_format(now(), \"%d-%m-%Y\") as fGeneracion,\r\n"
-			+ "       'pl5' as plantilla_esma, cl.pais\r\n"
+			+ "       'pl6' as plantilla_esma, cl.pais\r\n"
 			+ "       from noria2.c c \r\n"
 			+ "       inner join noria2.inicial i on c.id_prestamo=i.id_prestamo\r\n"
 			+ "       inner join noria2.registral r on c.id_prestamo=r.id_prestamo\r\n"
@@ -59,7 +59,7 @@ public interface PlantillaRepository extends JpaRepository<Plantilla_esma, Integ
 	@Query(value="select * from clasificaciones cl where cl.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_AC(@Param("plantilla") String plantilla);
 
-	@Query(value="select * from registral re where re.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros
+	@Query(value="select * from registral", nativeQuery = true) //pasar los parametros
 	List<Map<String, Object>> listaDatosxPlantilla_FP(@Param("plantilla") String plantilla);
 
 	@Query(value="select * from historico hi where hi.plantilla_esma=:plantilla", nativeQuery = true) //pasar los parametros

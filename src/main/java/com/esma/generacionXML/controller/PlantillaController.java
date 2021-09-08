@@ -67,7 +67,7 @@ public class PlantillaController {
 	@RequestMapping(value="plantillas/", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> listaxPlantilla(@RequestParam(required=false) String fondo,@RequestParam(required=false) String plantilla_esma,@RequestParam(required=false) String mfechaI,@RequestParam(required=false) String mfechaF) throws Exception, Throwable {
 		Map<String, Object>  fondoN=sPlantilla.listaxPlantilla(fondo,plantilla_esma,mfechaI,mfechaF);
-		sPlantilla.exportacionesReportes(fondo,plantilla_esma);
+		sPlantilla.exportacionesReportes(fondo,plantilla_esma,mfechaI,mfechaF);
 		//Metodo solciitud de fuente
 		//sPlantilla.opcionFuentes(plantilla_esma);
 		//con las tuplas se devuelve las estructura (columnas) que conforma las tablas en cuestion

@@ -24,7 +24,7 @@ import net.sf.jasperreports.engine.JRException;
 @Service
 public interface PlantillaService {
 	
-	public String exportacionesReportes(String reportFormato /*, Plantilla_esma plantilla*/, String plantilla_esma) throws FileNotFoundException, JRException;
+	public String exportacionesReportes(String reportFormato, String plantilla_esma, String fechai, String fechaf) throws FileNotFoundException, JRException;
 
 	//metodos iteratores de las colecciones "@RequestMapping(value="pl/""
 	Map<String, Object>  listaxPlantilla(String fondo, String cod_plantilla,String fechai, String fechaf) throws Exception, Throwable /*throws SAXException, JAXBException*/;

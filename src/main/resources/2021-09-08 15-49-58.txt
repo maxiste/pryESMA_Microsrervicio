@@ -1,0 +1,5 @@
+Se ha generado de manera Satisfactoria el Informe  Fondo de Coches Plantillas tipo Esma 5
+en la ruta C:\users\MALEBRMA\Desktop\ReportesSalida
+Periodo Inicial 2021-02-02
+Periodo Final 2021-02-28
+Fecha de Generacion Wed Sep 08 15:49:58 CEST 2021
